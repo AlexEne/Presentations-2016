@@ -7,9 +7,11 @@ The goal for these presentations is to familiarize programmers with low level co
 Soon I will also add the slides (now they are WIP).
 
 
+
 Credits:
 
 Me - you are on my page :)
+
 Radu Angelescu - https://github.com/raduangelescu
 
 
