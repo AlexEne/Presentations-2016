@@ -5,10 +5,15 @@
 #include <iostream>
 #include<conio.h>
 
+//Just in case i can't run this
+// Results are:
+//Elapsed time vector: 3005.84 ms
+//Elapsed time list : 11817.53 ms
+//Elapsed time MyVector : 2230.59 ms
+
 using namespace std;
 
-//This class is not important. Copy-pasted from stackoverflow. 
-//I don't remember the page.
+
 class Timer
 {
 public:
@@ -26,10 +31,26 @@ private:
 };
 
 
-//You can play arround with the size of the vector elements by modifying this array
+
 struct EpicStruct
 {
-	char m_memory[4];
+#define EpicStruct_SIZE 4
+	char m_memory[EpicStruct_SIZE];
+
+	EpicStruct()
+	{
+	}
+
+	explicit EpicStruct(size_t val)
+	{
+		memset(m_memory, val % 127, sizeof(m_memory));
+	}
+
+	void print()
+	{
+		for( int i = 0; i < EpicStruct_SIZE; ++i)
+			printf("%d", m_memory[i]);
+	}
 };
 
 
@@ -50,11 +71,6 @@ public:
 		m_Data = new T[m_AllocatedSize];
 	}
 
-	~MyVector()
-	{
-		delete[] m_Data;
-	}
-
 	void push_back(T element)
 	{
 		//One element is guaranteed to be available for end()
@@ -66,10 +82,10 @@ public:
 			// Don't trust me for it, go check.
 			size_t newSize = m_AllocatedSize + m_AllocatedSize / 2;
 			T* m_NewData = new T[newSize];
-
+			
 			memcpy(m_NewData, m_Data, m_Size*sizeof(T));
 			delete[] m_Data;
-
+			
 			m_AllocatedSize = newSize;
 			m_Data = m_NewData;
 		}
@@ -87,26 +103,27 @@ public:
 	}
 
 	//Taken from here:
-	// http://en.cppreference.com/w/cpp/algorithm/rotate
+	//
+	//
 	void rotate(iterator first, iterator n_first, iterator last)
 	{
 		iterator next = n_first;
-		while (first != n_first)
+		while(first != n_first)
 		{
 			swap(*first, *next);
 
 			first++;
 			next++;
 
-			if (next == last)
+			if(next == last)
 				next = n_first;
 			else if (first == n_first)
 				n_first = next;
 		}
 	}
 
-
-	//#define STL_WAY 
+	
+//#define STL_WAY 
 	void insert(iterator it, T value)
 	{
 #ifdef STL_WAY
@@ -117,12 +134,12 @@ public:
 		rotate(m_Data + off, end() - 1, end());
 #else   // MY way :)
 		// Faster insert
-		// Consumes more memory in theory due to a temporary variable that holds an extra ELEMENT - tmp
+		// Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
 		size_t off = it - m_Data;
 		push_back(value);
-		iterator new_location = m_Data + off;
+		iterator new_location = m_Data+off;
 		T tmp = *(end() - 1);
-		while (new_location != end())
+		while(new_location != end())
 		{
 			std::swap(tmp, *new_location++);
 		}
@@ -144,31 +161,38 @@ private:
 template<class T>
 double test_container(size_t count)
 {
-	T l;
+	T container;
 	T::iterator it;
 
 	srand(42);
 	Timer tmr;
-	//Add the first element, to avoid % 0 in the loop that follows
-	l.push_back(EpicStruct());
+
+	container.push_back(EpicStruct(0));
 
 	for (size_t i = 0; i < count; ++i)
 	{
-		//Get a random position where we want to insert the element
-		size_t pos = rand() % l.size();
+		size_t pos = rand() % container.size();
 
-		//Move the iterator until we reach that position. 
-		it = l.begin();
+		it = container.begin();
 		for (size_t p = 0; p < pos; ++p)
 		{
-			volatile EpicStruct temp = *it; //Touch each element
+			volatile char temp = (*it).m_memory[0]; //Touch each element from 0 to pos by reading it in a temp. This won't get optimized away due to volatile
 			it++;
 		}
-
-		//Insert it in the container.
-		l.insert(it, EpicStruct());
+		
+		container.insert(it, EpicStruct(i));
 	}
-	return tmr.elapsed();
+	
+	double t = tmr.elapsed();
+
+#if _DEBUG 
+	//If you want you can also print or save to file the struct. Just to check that they are the same in the end.
+	for(it = container.begin(); it != container.end(); ++it)
+		(*it).print();
+	printf("\n");
+#endif
+
+	return t;
 }
 
 
