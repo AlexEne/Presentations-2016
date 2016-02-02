@@ -7,7 +7,8 @@
 
 using namespace std;
 
-
+//This class is not important. Copy-pasted from stackoverflow. 
+//I don't remember the page.
 class Timer
 {
 public:
@@ -25,7 +26,7 @@ private:
 };
 
 
-
+//You can play arround with the size of the vector elements by modifying this array
 struct EpicStruct
 {
 	char m_memory[4];
@@ -148,17 +149,21 @@ double test_container(size_t count)
 
 	srand(42);
 	Timer tmr;
-
+	//Add the first element, to avoid % 0 in the loop that follows
 	l.push_back(EpicStruct());
 
 	for (size_t i = 0; i < count; ++i)
 	{
+		//Get a random position where we want to insert the element
 		size_t pos = rand() % l.size();
 
+		//Move the iterator until we reach that position. 
+		//Not needed for vector, but it doesn't matter that much.
 		it = l.begin();
 		for (size_t p = 0; p < pos; ++p)
-			it++;
+			it++; 
 
+		//Insert it in the container.
 		l.insert(it, EpicStruct());
 	}
 	return tmr.elapsed();
@@ -167,7 +172,7 @@ double test_container(size_t count)
 
 int main()
 {
-	size_t count = 200000;
+	size_t count = 99999;
 
 	double t = test_container<vector<EpicStruct>>(count);
 	printf("Elapsed time vector: %.2f ms\n", t);
