@@ -50,10 +50,10 @@ public:
 		m_Data = new T[m_AllocatedSize];
 	}
 
-    ~MyVector()
-    {
-        delete[] m_Data;
-    }
+	~MyVector()
+	{
+		delete[] m_Data;
+	}
 
 	void push_back(T element)
 	{
@@ -66,10 +66,10 @@ public:
 			// Don't trust me for it, go check.
 			size_t newSize = m_AllocatedSize + m_AllocatedSize / 2;
 			T* m_NewData = new T[newSize];
-			
+
 			memcpy(m_NewData, m_Data, m_Size*sizeof(T));
 			delete[] m_Data;
-			
+
 			m_AllocatedSize = newSize;
 			m_Data = m_NewData;
 		}
@@ -91,22 +91,22 @@ public:
 	void rotate(iterator first, iterator n_first, iterator last)
 	{
 		iterator next = n_first;
-		while(first != n_first)
+		while (first != n_first)
 		{
 			swap(*first, *next);
 
 			first++;
 			next++;
 
-			if(next == last)
+			if (next == last)
 				next = n_first;
 			else if (first == n_first)
 				n_first = next;
 		}
 	}
 
-	
-//#define STL_WAY 
+
+	//#define STL_WAY 
 	void insert(iterator it, T value)
 	{
 #ifdef STL_WAY
@@ -120,9 +120,9 @@ public:
 		// Consumes more memory in theory due to a temporary variable that holds an extra ELEMENT - tmp
 		size_t off = it - m_Data;
 		push_back(value);
-		iterator new_location = m_Data+off;
+		iterator new_location = m_Data + off;
 		T tmp = *(end() - 1);
-		while(new_location != end())
+		while (new_location != end())
 		{
 			std::swap(tmp, *new_location++);
 		}
@@ -158,10 +158,12 @@ double test_container(size_t count)
 		size_t pos = rand() % l.size();
 
 		//Move the iterator until we reach that position. 
-		//Not needed for vector, but it doesn't matter that much.
 		it = l.begin();
 		for (size_t p = 0; p < pos; ++p)
-			it++; 
+		{
+			volatile EpicStruct temp = *it; //Touch each element
+			it++;
+		}
 
 		//Insert it in the container.
 		l.insert(it, EpicStruct());
