@@ -71,6 +71,11 @@ public:
 		m_Data = new T[m_AllocatedSize];
 	}
 
+	~MyVector()
+	{
+		delete[] m_Data;
+	}
+
 	void push_back(T element)
 	{
 		//One element is guaranteed to be available for end()
