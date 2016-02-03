@@ -134,7 +134,7 @@ public:
         push_back(value);
         it = m_Data+off;
         rotate(it, end() - 1, end());
-#elif MY_WAY
+#elif defined(MY_WAY)
         // Faster insert
         // Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
         size_t off = it - m_Data;
