@@ -34,7 +34,7 @@ private:
 
 struct EpicStruct
 {
-#define EpicStruct_SIZE 15
+#define EpicStruct_SIZE 4
     char m_memory[EpicStruct_SIZE];
 
     EpicStruct()
@@ -215,7 +215,7 @@ double test_container(size_t count)
 
 int main()
 {
-    size_t count = 20;
+    size_t count = 99999;
 
     double t = test_container<vector<EpicStruct>>(count);
     printf("Elapsed time vector: %.2f ms\n", t);
