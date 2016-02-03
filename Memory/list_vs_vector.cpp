@@ -5,6 +5,12 @@
 #include <iostream>
 #include<conio.h>
 
+//Just in case i can't run this
+// Results are:
+//Elapsed time vector: 3005.84 ms
+//Elapsed time list : 11817.53 ms
+//Elapsed time MyVector : 2230.59 ms
+
 using namespace std;
 
 
@@ -25,9 +31,10 @@ private:
 };
 
 
+
 struct EpicStruct
 {
-#define EpicStruct_SIZE 4
+#define EpicStruct_SIZE 15
 	char m_memory[EpicStruct_SIZE];
 
 	EpicStruct()
@@ -48,14 +55,13 @@ struct EpicStruct
 
 
 // !!!!!!!!!!!!!!! This is a bad implementation of a vector. !!!!!!!!!!!!!!!!!!!!!!!
-// !!!!!!!!!!!!!!! No, really, it is a bad one.               !!!!!!!!!!!!!!!!!!!!!!!
-// Provided just as an example so people get a general idea of what's under the hood.
+// !!!!!!!!!!!!!!! No, really it is a bad one.               !!!!!!!!!!!!!!!!!!!!!!!
+//Provided just as an example so people get a general idea of what's under the hood.
 // Use this anywhere else besides 'demo' purposes and you deserve whatever bugs you get.
 template<class T>
 class MyVector
 {
 public:
-	//World's worst iterator
 	typedef T* iterator;
 
 	MyVector()
@@ -102,7 +108,8 @@ public:
 	}
 
 	//Taken from here:
-	// http://en.cppreference.com/w/cpp/algorithm/rotate
+	//
+	//
 	void rotate(iterator first, iterator n_first, iterator last)
 	{
 		iterator next = n_first;
@@ -122,8 +129,7 @@ public:
 
 	
 //#define STL_WAY 
-	//STL doesn't take a reference, but I do since I use the world's worst iterator.
-	void insert(iterator& it, T value)
+	iterator insert(iterator& it, T value)
 	{
 #ifdef STL_WAY
 		// This is how STL does it, using rotate, but not using temporary variables that hold ELEMENTS.
@@ -132,7 +138,7 @@ public:
 		push_back(value);
         it = m_Data+off;
 		rotate(it, end() - 1, end());
-#else   // MY way :)
+#elif MY_WAY
 		// Faster insert
 		// Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
 		size_t off = it - m_Data;
@@ -145,7 +151,16 @@ public:
 			std::swap(tmp, *new_location);
             new_location++;
 		}
+#else  //memmove way
+        size_t off = it - m_Data;
+		push_back(value);
+		iterator new_location = m_Data+off;
+        it = new_location;
+
+        memmove(it+1, it, (m_Size-off)*sizeof(T));
+        (*it)=value;
 #endif
+        return it;
 	}
 
 	size_t size()
@@ -200,7 +215,7 @@ double test_container(size_t count)
 
 int main()
 {
-	size_t count = 99999;
+	size_t count = 20;
 
 	double t = test_container<vector<EpicStruct>>(count);
 	printf("Elapsed time vector: %.2f ms\n", t);
