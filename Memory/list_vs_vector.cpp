@@ -5,12 +5,6 @@
 #include <iostream>
 #include<conio.h>
 
-//Just in case i can't run this
-// Results are:
-//Elapsed time vector: 3005.84 ms
-//Elapsed time list : 11817.53 ms
-//Elapsed time MyVector : 2230.59 ms
-
 using namespace std;
 
 
@@ -29,7 +23,6 @@ private:
 	typedef std::chrono::duration<double, std::milli> ms_;
 	std::chrono::time_point<clock_> beg_;
 };
-
 
 
 struct EpicStruct
@@ -55,13 +48,14 @@ struct EpicStruct
 
 
 // !!!!!!!!!!!!!!! This is a bad implementation of a vector. !!!!!!!!!!!!!!!!!!!!!!!
-// !!!!!!!!!!!!!!! No, really it is a bad one.               !!!!!!!!!!!!!!!!!!!!!!!
-//Provided just as an example so people get a general idea of what's under the hood.
+// !!!!!!!!!!!!!!! No, really, it is a bad one.               !!!!!!!!!!!!!!!!!!!!!!!
+// Provided just as an example so people get a general idea of what's under the hood.
 // Use this anywhere else besides 'demo' purposes and you deserve whatever bugs you get.
 template<class T>
 class MyVector
 {
 public:
+	//World's worst iterator
 	typedef T* iterator;
 
 	MyVector()
@@ -108,8 +102,7 @@ public:
 	}
 
 	//Taken from here:
-	//
-	//
+	// http://en.cppreference.com/w/cpp/algorithm/rotate
 	void rotate(iterator first, iterator n_first, iterator last)
 	{
 		iterator next = n_first;
@@ -129,24 +122,28 @@ public:
 
 	
 //#define STL_WAY 
-	void insert(iterator it, T value)
+	//STL doesn't take a reference, but I do since I use the world's worst iterator.
+	void insert(iterator& it, T value)
 	{
 #ifdef STL_WAY
 		// This is how STL does it, using rotate, but not using temporary variables that hold ELEMENTS.
 		// Uncomment the define above in order to enable this behaviour.
 		size_t off = it - m_Data;
 		push_back(value);
-		rotate(m_Data + off, end() - 1, end());
+        it = m_Data+off;
+		rotate(it, end() - 1, end());
 #else   // MY way :)
 		// Faster insert
 		// Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
 		size_t off = it - m_Data;
 		push_back(value);
 		iterator new_location = m_Data+off;
+        it = new_location;
 		T tmp = *(end() - 1);
 		while(new_location != end())
 		{
-			std::swap(tmp, *new_location++);
+			std::swap(tmp, *new_location);
+            new_location++;
 		}
 #endif
 	}
