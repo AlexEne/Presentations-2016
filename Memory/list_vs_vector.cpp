@@ -123,7 +123,8 @@ public:
     }
 
     
-//#define STL_WAY 
+//#define STL_WAY
+#define MY_WAY
     iterator insert(iterator& it, T value)
     {
 #ifdef STL_WAY
