@@ -5,11 +5,6 @@
 #include <iostream>
 #include<conio.h>
 
-//Just in case i can't run this
-// Results are:
-//Elapsed time vector: 3005.84 ms
-//Elapsed time list : 11817.53 ms
-//Elapsed time MyVector : 2230.59 ms
 
 using namespace std;
 
