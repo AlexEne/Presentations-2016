@@ -172,6 +172,29 @@ private:
 
 
 template<class T>
+void insert(T& container,typename T::iterator it, EpicStruct value)
+{
+    container.insert(it, value);
+}
+
+#define IMPROVE_STL_VECTOR
+#ifdef IMPROVE_STL_VECTOR
+template<>
+void insert(vector<EpicStruct>& container, vector<EpicStruct>::iterator it, EpicStruct value)
+{
+    size_t offset = it-container.begin();
+    container.push_back(value);
+    it = container.begin() + offset;
+    while(it != container.end())
+    {
+        std::swap(value, *it);
+        it++;
+    }
+}
+#endif
+
+
+template<class T>
 double test_container(size_t count)
 {
     T container;
@@ -193,7 +216,8 @@ double test_container(size_t count)
             it++;
         }
         
-        container.insert(it, EpicStruct(i));
+        //container.insert(it, EpicStruct(i));
+        insert(container, it, EpicStruct(i));
     }
     
     double t = tmr.elapsed();
