@@ -3,7 +3,6 @@
 #include <vector>
 #include <random>
 #include <iostream>
-#include<conio.h>
 
 
 using namespace std;
@@ -63,12 +62,12 @@ public:
     {
         m_AllocatedSize = 2;
         m_Size = 0;
-        m_Data = new T[m_AllocatedSize];
+        m_Data = (T*) malloc(m_AllocatedSize*sizeof(T));
     }
 
     ~MyVector()
     {
-        delete[] m_Data;
+        free(m_Data);
     }
 
     void push_back(T element)
@@ -81,10 +80,10 @@ public:
             //Grow by half ( this is what microsoft SDL vector does. I know because I checked the code ).
             // Don't trust me for it, go check.
             size_t newSize = m_AllocatedSize + m_AllocatedSize / 2;
-            T* m_NewData = new T[newSize];
+            T* m_NewData = (T*)malloc(newSize*sizeof(T));
             
             memcpy(m_NewData, m_Data, m_Size*sizeof(T));
-            delete[] m_Data;
+            free(m_Data);
             
             m_AllocatedSize = newSize;
             m_Data = m_NewData;
@@ -172,15 +171,15 @@ private:
 
 
 template<class T>
-void insert(T& container,typename T::iterator it, EpicStruct value)
+void insert(T& container,typename T::iterator it, EpicStruct&& value)
 {
-    container.insert(it, value);
+    container.insert(it, std::move(value));
 }
 
-#define IMPROVE_STL_VECTOR
-#ifdef IMPROVE_STL_VECTOR
+#define OPTIMIZE_STL_VECTOR
+#ifdef OPTIMIZE_STL_VECTOR
 template<>
-void insert(vector<EpicStruct>& container, vector<EpicStruct>::iterator it, EpicStruct value)
+void insert(vector<EpicStruct>& container, vector<EpicStruct>::iterator it, EpicStruct&& value)
 {
     size_t offset = it-container.begin();
     container.push_back(value);
@@ -193,13 +192,12 @@ void insert(vector<EpicStruct>& container, vector<EpicStruct>::iterator it, Epic
 }
 #endif
 
-
 template<class T>
 double test_container(size_t count)
 {
     T container;
-    T::iterator it;
-
+    typename T::iterator it;
+    
     srand(42);
     Timer tmr;
 
@@ -216,8 +214,7 @@ double test_container(size_t count)
             it++;
         }
         
-        //container.insert(it, EpicStruct(i));
-        insert(container, it, EpicStruct(i));
+        insert<T>(container, it, EpicStruct(i));
     }
     
     double t = tmr.elapsed();
@@ -236,6 +233,11 @@ double test_container(size_t count)
 int main()
 {
     size_t count = 99999;
+#ifdef OPTIMIZE_STL_VECTOR
+    printf("With my optimized version of std::vector::insert()\n");
+#else
+    printf("With visual studio's implementation version of std::vector::insert()\n");
+#endif
 
     double t = test_container<vector<EpicStruct>>(count);
     printf("Elapsed time vector: %.2f ms\n", t);
@@ -246,6 +248,5 @@ int main()
     t = test_container<MyVector<EpicStruct>>(count);
     printf("Elapsed time MyVector: %.2f ms\n", t);
 
-    _getch();
     return 0;
 }
