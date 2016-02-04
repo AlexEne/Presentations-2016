@@ -42,7 +42,7 @@ struct EpicStruct
 
     void print()
     {
-        for( int i = 0; i < EpicStruct_SIZE; ++i)
+        for (int i = 0; i < EpicStruct_SIZE; ++i)
             printf("%d", m_memory[i]);
     }
 };
@@ -62,7 +62,7 @@ public:
     {
         m_AllocatedSize = 2;
         m_Size = 0;
-        m_Data = (T*) malloc(m_AllocatedSize*sizeof(T));
+        m_Data = (T*)malloc(m_AllocatedSize*sizeof(T));
     }
 
     ~MyVector()
@@ -81,10 +81,10 @@ public:
             // Don't trust me for it, go check.
             size_t newSize = m_AllocatedSize + m_AllocatedSize / 2;
             T* m_NewData = (T*)malloc(newSize*sizeof(T));
-            
+
             memcpy(m_NewData, m_Data, m_Size*sizeof(T));
             free(m_Data);
-            
+
             m_AllocatedSize = newSize;
             m_Data = m_NewData;
         }
@@ -102,26 +102,25 @@ public:
     }
 
     //Taken from here:
-    //
-    //
+    //http://www.cplusplus.com/reference/algorithm/rotate/
     void rotate(iterator first, iterator n_first, iterator last)
     {
         iterator next = n_first;
-        while(first != n_first)
+        while (first != n_first)
         {
             swap(*first, *next);
 
             first++;
             next++;
 
-            if(next == last)
+            if (next == last)
                 next = n_first;
             else if (first == n_first)
                 n_first = next;
         }
     }
 
-    
+
 //#define STL_WAY
 #define MY_WAY
     iterator insert(iterator& it, T value)
@@ -131,17 +130,17 @@ public:
         // Uncomment the define above in order to enable this behaviour.
         size_t off = it - m_Data;
         push_back(value);
-        it = m_Data+off;
+        it = m_Data + off;
         rotate(it, end() - 1, end());
 #elif defined(MY_WAY)
         // Faster insert
         // Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
         size_t off = it - m_Data;
         push_back(value);
-        iterator new_location = m_Data+off;
+        iterator new_location = m_Data + off;
         it = new_location;
         T tmp = *(end() - 1);
-        while(new_location != end())
+        while (new_location != end())
         {
             std::swap(tmp, *new_location);
             new_location++;
@@ -149,11 +148,11 @@ public:
 #else  //memmove way
         size_t off = it - m_Data;
         push_back(value);
-        iterator new_location = m_Data+off;
+        iterator new_location = m_Data + off;
         it = new_location;
 
-        memmove(it+1, it, (m_Size-off)*sizeof(T));
-        (*it)=value;
+        memmove(it + 1, it, (m_Size - off)*sizeof(T));
+        (*it) = value;
 #endif
         return it;
     }
@@ -170,34 +169,13 @@ private:
 };
 
 
-template<class T>
-void insert(T& container,typename T::iterator it, EpicStruct&& value)
-{
-    container.insert(it, std::move(value));
-}
-
-#define OPTIMIZE_STL_VECTOR
-#ifdef OPTIMIZE_STL_VECTOR
-template<>
-void insert(vector<EpicStruct>& container, vector<EpicStruct>::iterator it, EpicStruct&& value)
-{
-    size_t offset = it-container.begin();
-    container.push_back(value);
-    it = container.begin() + offset;
-    while(it != container.end())
-    {
-        std::swap(value, *it);
-        it++;
-    }
-}
-#endif
 
 template<class T>
 double test_container(size_t count)
 {
     T container;
     typename T::iterator it;
-    
+
     srand(42);
     Timer tmr;
 
@@ -213,15 +191,15 @@ double test_container(size_t count)
             volatile char temp = (*it).m_memory[0]; //Touch each element from 0 to pos by reading it in a temp. This won't get optimized away due to volatile
             it++;
         }
-        
-        insert<T>(container, it, EpicStruct(i));
+
+        container.insert(it, EpicStruct(i));
     }
-    
+
     double t = tmr.elapsed();
 
 #if _DEBUG 
     //If you want you can also print or save to file the struct. Just to check that they are the same in the end.
-    for(it = container.begin(); it != container.end(); ++it)
+    for (it = container.begin(); it != container.end(); ++it)
         (*it).print();
     printf("\n");
 #endif
@@ -233,11 +211,6 @@ double test_container(size_t count)
 int main()
 {
     size_t count = 99999;
-#ifdef OPTIMIZE_STL_VECTOR
-    printf("With my optimized version of std::vector::insert()\n");
-#else
-    printf("With visual studio's implementation version of std::vector::insert()\n");
-#endif
 
     double t = test_container<vector<EpicStruct>>(count);
     printf("Elapsed time vector: %.2f ms\n", t);
