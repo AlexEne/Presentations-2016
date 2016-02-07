@@ -123,7 +123,7 @@ public:
 
 //#define STL_WAY
 //#define MY_WAY
-    iterator insert(iterator& it, T value)
+    iterator insert(iterator it, T value)
     {
 #ifdef STL_WAY
         // This is how STL does it, using rotate, but not using temporary variables that hold ELEMENTS.
