@@ -126,7 +126,7 @@ public:
     iterator insert(iterator it, T value)
     {
 #ifdef STL_WAY
-        // This is how STL does it, using rotate, but not using temporary variables that hold ELEMENTS.
+        // This is how STL does it, using rotate
         // Uncomment the define above in order to enable this behaviour.
         size_t off = it - m_Data;
         push_back(value);
