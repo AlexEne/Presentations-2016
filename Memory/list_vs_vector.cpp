@@ -134,7 +134,6 @@ public:
         rotate(it, end() - 1, end());
 #elif defined(MY_WAY)
         // Faster insert
-        // Consumes more memory in theory due to extra temporary variables that hold ELEMENTS(tmp and tmp2)
         size_t off = it - m_Data;
         push_back(value);
         iterator new_location = m_Data + off;
