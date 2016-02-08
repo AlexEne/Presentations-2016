@@ -70,7 +70,7 @@ public:
         free(m_Data);
     }
 
-    void push_back(T element)
+    void push_back(const T& element)
     {
         //One element is guaranteed to be available for end()
         // + 1 for the new one
@@ -123,7 +123,7 @@ public:
 
 //#define STL_WAY
 //#define MY_WAY
-    iterator insert(iterator it, T value)
+    iterator insert(iterator it, const T& value)
     {
 #ifdef STL_WAY
         // This is how STL does it, using rotate
