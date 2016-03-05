@@ -3,10 +3,15 @@
 #include <vector>
 #include <random>
 #include <stdio.h>
-
+#include "defines.h"
 
 using namespace std;
-
+//DEFINES
+#ifndef PYTHON_TESTER
+#define EpicStruct_SIZE 4
+#define List_SIZE 99999
+#endif
+//EO_DEFINES
 
 class Timer
 {
@@ -28,7 +33,6 @@ private:
 
 struct EpicStruct
 {
-#define EpicStruct_SIZE 4
     char m_memory[EpicStruct_SIZE];
 
     EpicStruct()
@@ -200,7 +204,7 @@ double test_container(size_t count)
 
     double t = tmr.elapsed();
 
-#if _DEBUG 
+#if _DEBUG
     //If you want you can also print or save to file the struct. Just to check that they are the same in the end.
     for (it = container.begin(); it != container.end(); ++it)
         (*it).print();
@@ -213,7 +217,7 @@ double test_container(size_t count)
 
 int main()
 {
-    size_t count = 99999;
+    size_t count = List_SIZE;
 
     double t = test_container<vector<EpicStruct>>(count);
     printf("Elapsed time vector: %.2f ms\n", t);

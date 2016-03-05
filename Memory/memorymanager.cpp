@@ -7,6 +7,11 @@
 #include <windows.h>
 using namespace std;
 
+#ifndef PYTHON_TESTER
+#define EpicStruct_SIZE 4
+#define List_SIZE 0x20000
+#define TestElements_SIZE 100000
+#endif
 
 class Timer
 {
@@ -28,7 +33,6 @@ private:
 
 struct EpicStruct
 {
-#define EpicStruct_SIZE 4
 	char m_memory[EpicStruct_SIZE];
 
 	EpicStruct()
@@ -57,7 +61,7 @@ struct ListElement
 template <class T>
 class MemoryManagerArray
 {
-	const unsigned int c_maxNumElements = 0x20000;
+	const unsigned int c_maxNumElements = List_SIZE;
 	const unsigned int c_blockSize = sizeof(T) * c_maxNumElements;
 
 	//pointer to beginging of allocated memory
@@ -99,14 +103,14 @@ public:
 template <class T>
 class MemoryManagerList
 {
-	const unsigned int c_maxNumeElements = 0x20000;
+	const unsigned int c_maxNumeElements = List_SIZE;
 	const unsigned int c_blockSize = sizeof(MemElement) * c_maxNumeElements;
-	
+
 	//pointer to beginging of allocated memory
 	unsigned char	*m_allocatedMemory;
 	//value field offset in structure
 	unsigned int	m_structValueOffset;
-	//List of all memory blocks 
+	//List of all memory blocks
 	struct MemElement
 	{
 		MemElement *next;
@@ -195,16 +199,6 @@ double test_containerCustomArray(size_t count)
 	}
 	double t = tmr.elapsed();
 
-	Timer tmrdelete;
-	ListElement * p = root;
-	while (p != NULL)
-	{
-		ListElement* del = p;
-		p = p->next;
-		g_mmArray.deleteElement(del);
-	}
-	printf("tmrdelete : %f \n", tmrdelete.elapsed());
-
 	return t;
 }
 
@@ -237,17 +231,6 @@ double test_containerCustomList(size_t count)
 		currentSize++;
 	}
 	double t = tmr.elapsed();
-	
-	Timer tmrdelete;
-	ListElement * p = root;
-	while(p != NULL)
-	{	
-		ListElement* del = p;
-		p = p->next;
-		g_mmListDelete.deleteElement(del);
-	}
-	printf("tmrdelete : %f \n", tmrdelete.elapsed());
-
 	return t;
 }
 
@@ -287,7 +270,6 @@ double test_containerCustomMalloc(size_t count)
 		p = p->next;
 		free(del);
 	}
-	printf("tmrdelete malloc : %f \n", tmrdelete.elapsed());
 
 	return t;
 }
@@ -316,14 +298,14 @@ double test_container(size_t count)
 		container.insert(it, EpicStruct(i));
 	}
 
-	
+
 	return tmr.elapsed();
 }
 
 
 int main()
 {
-	size_t count = 100000;
+	size_t count = TestElements_SIZE;
 	double t;
 
 	t = test_containerCustomArray(count);

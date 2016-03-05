@@ -1,5 +1,2 @@
-set arg1=%1
-set arg2=%2
-
-call %arg1%
-cl /EHsc %arg2%
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+cl  /EHsc  /DEpicStruct_SIZE=13 /DList_SIZE=999 /DPYTHON_TESTER list_vs_vector.cpp

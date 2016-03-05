@@ -3,6 +3,11 @@
 
 using namespace std;
 
+#ifndef PYTHON_TESTER
+#define EpicStruct_SIZE 4
+#define List_SIZE 100000
+#endif
+
 class Timer
 {
 public:
@@ -22,7 +27,6 @@ private:
 
 struct EpicStruct
 {
-#define EpicStruct_SIZE 4
     char m_memory[EpicStruct_SIZE];
 
     EpicStruct()
@@ -41,13 +45,12 @@ struct EpicStruct
     }
 };
 
-#define COUNT 100000
 
 double insert_stl_version_rvalueref()
 {
     Timer tmr;
     vector<EpicStruct> vec;
-    for(size_t i = 0; i < COUNT; ++i)
+    for(size_t i = 0; i < List_SIZE; ++i)
     {
         vec.insert(vec.begin(), EpicStruct(i));
     }
@@ -59,7 +62,7 @@ double insert_normal()
 {
     Timer tmr;
     vector<EpicStruct> vec;
-    for(size_t i = 0; i < COUNT; ++i)
+    for(size_t i = 0; i < List_SIZE; ++i)
     {
         EpicStruct tmp = EpicStruct(i);
         vec.insert(vec.begin(), tmp);

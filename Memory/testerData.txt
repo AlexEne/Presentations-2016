@@ -1,0 +1,5 @@
+list_vs_vector, "EpicStruct_SIZE=1", "List_SIZE=999"
+list_vs_vector, "EpicStruct_SIZE=5", "List_SIZE=999"
+list_vs_vector, "EpicStruct_SIZE=16", "List_SIZE=999"
+list_vs_vector, "EpicStruct_SIZE=128", "List_SIZE=99"
+list_vs_vector, "EpicStruct_SIZE=13", "List_SIZE=999"
