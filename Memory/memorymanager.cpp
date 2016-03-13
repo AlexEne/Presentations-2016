@@ -167,6 +167,73 @@ public:
 
 };
 
+//Simple stupid memory manager that has no loops and handles free
+class MemoryManagerComplete
+{
+	unsigned int m_numOfBlocks; // Number of blocks
+	unsigned int m_sizeOfEachBlock; // Size of a block element
+	unsigned int m_numFreeBlocks; // Num of remaining blocks
+	unsigned int m_numInitialized; // Num of initialized blocks
+	unsigned char* m_memStart; // Begining of memory
+	unsigned char* m_next; // num of next free block
+public:
+	MemoryManagerComplete(): m_numOfBlocks(0),
+							 m_sizeOfEachBlock(0),
+							 m_numFreeBlocks(0),
+							 m_numInitialized(0),
+							 m_memStart(NULL),
+							 m_next(NULL)
+	{
+
+	}
+	~MemoryManagerComplete()
+	{
+		Destroy();
+	}
+
+	void Destroy()
+	{
+		delete[] m_memStart;
+		m_memStart = NULL;
+	}
+	//helper function that gets address from block id
+	inline unsigned char * AddrFromIndex(unsigned int i)const
+	{
+		return m_memStart + (i * m_sizeOfEachBlock);
+	}
+ //helper function that gets the block id from address
+	inline unsigned int IndexFromAddr(const unsigned char * p)const
+	{
+		return ((unsigned int)(p - m_memStart)) / m_sizeOfEachBlock;
+	}
+	// main alocate function
+	void * Allocate()
+	{
+		if (m_numInitialized < m_numOfBlocks)
+		{
+			unsigned int *p = (unsigned int *)AddrFromIndex(m_numInitialized);
+			*p = m_numInitialized + 1;
+			m_numInitialized++;
+		}
+		void * ret = NULL;
+		if (m_numFreeBlocks > 0)
+		{
+			ret = (void*)m_next;
+			--m_numFreeBlocks;
+			m_next = (m_numFreeBlocks != 0) ? AddrFromIndex(*((unsigned int*)m_next)) : NULL;
+		}
+		return ret;
+	}
+ //main free function
+	void DeAllocate(void *p)
+	{
+		(*(unsigned int *)p)  = (m_next != NULL) ?  IndexFromAddr(m_next): m_numOfBlocks;
+		m_next = (unsigned char*)p;
+		++m_numFreeBlocks;
+	}
+};
+
+
 MemoryManagerArray<ListElement> g_mmArray;
 MemoryManagerList<ListElement> g_mmListDelete;
 
