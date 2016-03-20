@@ -10,10 +10,10 @@ class MemoryManagerComplete
 public:
 	MemoryManagerComplete()
 	{
-		m_numOfBlocks	= numBlocks;
-		m_memStart		= (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(T) * m_numOfBlocks); 
+		m_numOfBlocks		= numBlocks;
+		m_memStart			= (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(T) * m_numOfBlocks);
 		m_numFreeBlocks = numBlocks;
-		m_next			= m_memStart;
+		m_next					= m_memStart;
 	}
 
 	~MemoryManagerComplete()
@@ -41,8 +41,8 @@ public:
 		if (m_numInitialized < m_numOfBlocks)
 		{
 			unsigned int *p = (unsigned int *)AddrFromIndex(m_numInitialized);
-			*p = m_numInitialized + 1;
 			m_numInitialized++;
+			*p = m_numInitialized;
 		}
 		void * ret = nullptr;
 		if (m_numFreeBlocks > 0)
@@ -66,7 +66,7 @@ public:
 		return (T*)Allocate();
 	}
 
-	void deleteElement(T * el) 
+	void deleteElement(T * el)
 	{
 		DeAllocate(el);
 	}

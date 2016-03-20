@@ -3,13 +3,11 @@
 template <class T,unsigned int count>
 class MemoryManagerList
 {
-	const unsigned int c_blockSize = sizeof(MemElement) * count;
-
 	//pointer to beginging of allocated memory
 	unsigned char	*m_allocatedMemory;
 	//value field offset in structure
 	unsigned int	m_structValueOffset;
-	//List of all memory blocks 
+	//List of all memory blocks
 	struct MemElement
 	{
 		MemElement *next;
@@ -20,7 +18,7 @@ public:
 
 	MemoryManagerList()
 	{
-		m_allocatedMemory = (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, c_blockSize);
+		m_allocatedMemory = (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MemElement) * count);
 
 		m_freeList = (MemElement*)m_allocatedMemory;
 		MemElement * listIter = m_freeList;
@@ -31,14 +29,14 @@ public:
 			listIter = listIter->next;
 		}
 		// mark the end of the list
-		listIter->next = NULL;
+		listIter->next = nullptr;
 		// hold the value field adress offset
 		m_structValueOffset = (size_t)offsetof(MemElement, val);
 	}
 
 	T * getNewElement()
 	{
-		if (m_freeList != NULL)
+		if (m_freeList != nullptr)
 		{
 			// remove the element from the free list
 			MemElement * newElement = m_freeList;
@@ -47,8 +45,7 @@ public:
 		}
 		else
 		{
-			assert(0);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -62,6 +59,7 @@ public:
 
 	~MemoryManagerList()
 	{
+		//Free all the memory
 		HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, m_allocatedMemory);
 	}
 
