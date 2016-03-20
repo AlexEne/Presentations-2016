@@ -16,7 +16,7 @@ public:
 	{
 		return (m_currentIdx < count) ? &m_allocatedMemory[m_currentIdx++] : nullptr;
 	}
-	void deleteElement(T * el) const{//NOTHING}
+	void deleteElement(T * el) const{/*NOTHING*/}
 	~MemoryManagerArray()
 	{
 		//Free all the memory
