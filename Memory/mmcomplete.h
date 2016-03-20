@@ -41,8 +41,8 @@ public:
 		if (m_numInitialized < m_numOfBlocks)
 		{
 			unsigned int *p = (unsigned int *)AddrFromIndex(m_numInitialized);
+			*p = m_numInitialized + 1;
 			m_numInitialized++;
-			*p = m_numInitialized;
 		}
 		void * ret = nullptr;
 		if (m_numFreeBlocks > 0)
