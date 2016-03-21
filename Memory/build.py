@@ -34,6 +34,14 @@ def getCompiler():
     return current_vc_path
 
 def genBuildBat(vcfile,defines,filename,results):
+
+    filename_noexe = os.path.splitext(filename)[0]
+
+    if os.path.isfile(filename_noexe+ '.exe'):
+        os.remove(filename_noexe+ '.exe')
+    if os.path.isfile(filename_noexe+ '.obj'):
+        os.remove(filename_noexe+ '.obj')
+
     filebat = open("buildFile.bat",'w')
     filebat.write("call \""+vcfile+"\"" + "\n")
 
@@ -45,8 +53,9 @@ def genBuildBat(vcfile,defines,filename,results):
         df = df.strip("\"")
         df = df.replace("\"", "")
         filebat.write(" /D"+df)
-    filebat.write(" /DPYTHON_TESTER ")
-
+    filebat.write(" /DPYTHON_TESTER /O2 ")
+    pdbname =filename_noexe + ".pdb"
+    filebat.write("/GS /GL /analyze- /W3 /Gy /Zc:wchar_t /Zi /Gm- /O2 /sdl /Fd\"+pdbname+\" /Zc:inline /fp:precise /D \"_MBCS\" /errorReport:prompt /WX- /Zc:forScope /Gd /Oy- /Oi /MD /EHsc ")
     filebat.write(filename)
     filebat.close()
 
@@ -55,7 +64,6 @@ def genBuildBat(vcfile,defines,filename,results):
     stdout_value = process.communicate()[0]
     print "Build Output:"+ stdout_value
 
-    filename_noexe = os.path.splitext(filename)[0]
     process = subprocess.Popen(filename_noexe+".exe", shell=True, bufsize=1024, stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     process.wait()
     stdout_value = process.communicate()[0]
@@ -95,4 +103,3 @@ for key, res in results.iteritems():
         print val["params"]
         print str(val["val"])
     print "---------"
-
