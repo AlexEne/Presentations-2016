@@ -56,8 +56,8 @@ def get_build_bat(vcfile, defines, filename, results):
         filebat.write(' /D' + df)
     filebat.write(' /DPYTHON_TESTER /O2 ')
     pdbname = filename_noexe + '.pdb'
-    filebat.write(
-        '/GS /GL /analyze- /W3 /Gy /Zc:wchar_t /Zi /Gm- /O2 /sdl /Fd "' + pdbname + '" /Zc:inline /fp:precise /D "_MBCS" /errorReport:prompt /WX- /Zc:forScope /Gd /Oy- /Oi /MD /EHsc ')
+    filebat.write("/GS /GL /analyze- /W3 /Gy /Zc:wchar_t /Zi /Gm- /O2 /sdl /Fd\"+pdbname+\" /Zc:inline /fp:precise /D \"_MBCS\" /errorReport:prompt /WX- /Zc:forScope /Gd /Oy- /Oi /MD /EHsc ")
+
     filebat.write(filename)
     filebat.close()
 
